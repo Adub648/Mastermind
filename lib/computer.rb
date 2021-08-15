@@ -21,12 +21,19 @@ class Computer
   def create_human_number
     puts 'Please enter 4 numbers between "1" and "6" that you would like to be your code.'
     puts "\n"
-    input = gets.chomp
-    input = input.split('')
-    if input.length == 4
-      input.each_with_index do |num, index|
+    validate_input
+    @human_number = @input
+    puts "\n"
+    comp_turn
+  end
+
+  def validate_input
+    @input = gets.chomp
+    @input = @input.split('')
+    if @input.length == 4
+      @input.each_with_index do |num, index|
         num = num.to_i
-        input[index] = num
+        @input[index] = num
         unless num.between?(1, 6)
           puts 'Error: Characters have been entered that are not between 1 and 6! Please try again.'
           create_human_number
@@ -36,10 +43,6 @@ class Computer
       puts 'Error: Not four characters entered! Please try again.'
       create_human_number
     end
-    # enter number in variable and start computer guesses
-    @human_number = input
-    puts "\n"
-    comp_turn
   end
 
   def comp_turn
@@ -48,33 +51,34 @@ class Computer
       # make this guess as first guess and then check
       if @guesses == 1
         @comp_guess = [1, 1, 2, 2]
-        correct = test_input(@comp_guess, @human_number)
+        @correct = test_input(@comp_guess, @human_number)
       else
         # guess the first avaiable possible guess and then check
         @comp_guess = @possible_guesses[0]
-        correct = test_input(@comp_guess, @human_number)
+        @correct = test_input(@comp_guess, @human_number)
       end
-
-      # create iterant
-      i = @possible_guesses.length - 1
-      # while that iterant exists
-      until i < 0
-        send_possibility = @possible_guesses[i]
-        # test the guess made against the array of possible guesses
-        possible_results = test_input(@comp_guess, send_possibility)
-        # if the response isn't the same as to actual answer, delete from array
-        unless correct == possible_results
-          @possible_guesses.delete_at(i)
-        end
-        i -= 1
-      end
-
-      # output guess, check if correct and iterate
+      prune
       p @comp_guess
       puts "\n"
-      check_correct(correct, @computer_game, @guesses)
+      check_correct(@correct, @computer_game, @guesses)
       @guesses += 1
       sleep(2)
+    end
+  end
+
+  def prune
+    # create iterant
+    i = @possible_guesses.length - 1
+    # while that iterant exists
+    until i < 0
+      send_possibility = @possible_guesses[i]
+      # test the guess made against the array of possible guesses
+      possible_results = test_input(@comp_guess, send_possibility)
+      # if the response isn't the same as to actual answer, delete from array
+      unless @correct == possible_results
+        @possible_guesses.delete_at(i)
+      end
+      i -= 1
     end
   end
 end

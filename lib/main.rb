@@ -18,7 +18,7 @@ class Main
       puts "\n"
       game = Human.new
       game.start_game
-    # if they wnat to make the code
+    # if they want to make the code
     elsif answer == 'c'
       puts "\n"
       game = Computer.new
